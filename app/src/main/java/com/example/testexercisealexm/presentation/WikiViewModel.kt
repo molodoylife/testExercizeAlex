@@ -8,8 +8,7 @@ import com.example.testexercisealexm.domain.model.WikiPoiDetails
 import com.example.testexercisealexm.domain.model.WikiPoint
 import com.example.testexercisealexm.domain.use_case.WikiUseCase
 import com.google.android.gms.maps.model.LatLng
-import io.reactivex.Scheduler
-import io.reactivex.Single
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -17,20 +16,22 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 
+
 class WikiViewModelImp @Inject constructor(val wikiUseCase: WikiUseCase): ViewModel() {
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     private val points: MutableLiveData<List<WikiPoint>> = MutableLiveData()
 
+    private val pointDetails: MutableLiveData<WikiPoiDetails> = MutableLiveData()
+
     private val errors: MutableLiveData<Throwable> = MutableLiveData()
 
-    fun getPoints(): LiveData<List<WikiPoint>> {
-        return points
-    }
+    fun getPoints(): LiveData<List<WikiPoint>> = points
 
-    fun getErrors(): LiveData<Throwable> {
-        return errors
-    }
+    fun getPoiDetails(): LiveData<WikiPoiDetails> = pointDetails
+
+    fun getErrors(): LiveData<Throwable> = errors
+
 
     fun getNearestPois(radius: Int, position: LatLng){
         wikiUseCase.getNearestPois(radius, position.latitude, position.longitude)
@@ -40,9 +41,23 @@ class WikiViewModelImp @Inject constructor(val wikiUseCase: WikiUseCase): ViewMo
                 disposables.add(it)
             }
             .subscribe ({
-                it
+                points.postValue(it)
             }, {
-                it
+                errors.postValue(it)
+            })
+    }
+
+    fun getPoiDetails(id: Int){
+        wikiUseCase.getPoiDetails(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                disposables.add(it)
+            }
+            .subscribe ({
+                pointDetails.postValue(it)
+            }, {
+                errors.postValue(it)
             })
     }
 

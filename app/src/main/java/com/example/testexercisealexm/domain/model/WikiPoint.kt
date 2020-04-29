@@ -1,3 +1,5 @@
 package com.example.testexercisealexm.domain.model
 
-data class WikiPoint(val pageId: Int, val lat: Double, val lon: Double)
+import com.google.android.gms.maps.model.LatLng
+
+data class WikiPoint(val pageId: Int, val position: LatLng)

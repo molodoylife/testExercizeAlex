@@ -2,7 +2,6 @@ package com.example.testexercisealexm.presentation
 
 import android.Manifest
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,16 +16,21 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.tbruyelle.rxpermissions2.RxPermissions
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.wiki_map_fragment.*
 import javax.inject.Inject
 
 
-class WikiMapFragment : DaggerFragment(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
+class WikiMapFragment : DaggerFragment(), OnMapReadyCallback,
+    GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMarkerClickListener {
+
+    private val markersWithPageId = mutableMapOf<Marker, Int>()
 
     lateinit var rxPermissions: RxPermissions
 
@@ -61,7 +65,13 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
             googleMap.setOnCameraIdleListener(onCameraIdleListener)
 
+            googleMap.setOnMarkerClickListener(this@WikiMapFragment)
+
             googleMap.setOnMyLocationButtonClickListener(this@WikiMapFragment)
+
+            pbWikiMap.visibility = View.VISIBLE
+
+            wikiViewModel.getNearestPois(getMapRadius(googleMap), lastLocation)
         }
     }
 
@@ -95,10 +105,8 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback, GoogleMap.OnMyLoca
         rxPermissions
             .request(Manifest.permission.ACCESS_FINE_LOCATION)
             .subscribe { isGranted ->
-                if (isGranted) {
+                if (isGranted)
                     startLocationUpdates()
-                } else {
-                }
             }
     }
 
@@ -110,24 +118,40 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback, GoogleMap.OnMyLoca
         mapFragment.getMapAsync(this)
 
         wikiViewModel.getPoints().observe(viewLifecycleOwner, Observer { points ->
-            points
+            pbWikiMap.visibility = View.GONE
+
+            googleMap?.let { map ->
+                map.clear()
+                markersWithPageId.clear()
+
+                points.forEach { point ->
+                    val markerToAdd = MarkerOptions().position(point.position)
+                    markersWithPageId[map.addMarker(markerToAdd)] = point.pageId
+                }
+            }
+        })
+
+        wikiViewModel.getPoiDetails().observe(viewLifecycleOwner, Observer { details ->
+            pbWikiMap.visibility = View.GONE
+
+            val detailsArgs = Bundle().apply { putParcelable(POI_DETAILS_KEY, details) }
+            PoiDialogFragment.newInstance(detailsArgs).show(
+                requireActivity().supportFragmentManager,
+                POI_DETAILS_FRAGMENT_TAG
+            )
         })
 
         wikiViewModel.getErrors().observe(viewLifecycleOwner, Observer { error ->
-            error
+            pbWikiMap.visibility = View.GONE
+
+            Snackbar.make(rootLayout, error.localizedMessage, Snackbar.LENGTH_LONG).show()
         })
-
-        //wikiViewModel.getNearestPois(1000, centerLatLng)
-
-
-//        val poiDialogFragment: PoiDialogFragment = PoiDialogFragment.newInstance()
-//        poiDialogFragment.show(fragmentManager!!, "dialog")
-
     }
 
     private val onCameraIdleListener: GoogleMap.OnCameraIdleListener =
         GoogleMap.OnCameraIdleListener {
-
+            pbWikiMap.visibility = View.VISIBLE
+            wikiViewModel.getNearestPois(getMapRadius(googleMap), googleMap.cameraPosition.target)
         }
 
     private fun createLocationRequest(): LocationRequest {
@@ -155,6 +179,15 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
     override fun onMyLocationButtonClick(): Boolean {
         startLocationUpdates()
+        return true
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        markersWithPageId[marker]?.let {
+            pbWikiMap.visibility = View.VISIBLE
+            wikiViewModel.getPoiDetails(it)
+        }
+
         return true
     }
 }
