@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.testexercisealexm.R
+import com.example.testexercisealexm.domain.model.WikiPoint
+import com.example.testexercisealexm.presentation.poi_details.PoiDialogFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -30,7 +32,9 @@ import javax.inject.Inject
 class WikiMapFragment : DaggerFragment(), OnMapReadyCallback,
     GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMarkerClickListener {
 
-    private val markersWithPageId = mutableMapOf<Marker, Int>()
+    private val markersWithPageId = mutableMapOf<Marker, WikiPoint>()
+
+    private var lastLocation: LatLng? = null
 
     lateinit var rxPermissions: RxPermissions
 
@@ -50,7 +54,7 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback,
 
             stopLocationUpdates()
 
-            val lastLocation =
+            lastLocation =
                 LatLng(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude)
 
             val position = CameraPosition.Builder()
@@ -71,7 +75,7 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback,
 
             pbWikiMap.visibility = View.VISIBLE
 
-            wikiViewModel.getNearestPois(getMapRadius(googleMap), lastLocation)
+            wikiViewModel.getNearestPois(getMapRadius(googleMap), lastLocation!!)
         }
     }
 
@@ -126,7 +130,7 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback,
 
                 points.forEach { point ->
                     val markerToAdd = MarkerOptions().position(point.position)
-                    markersWithPageId[map.addMarker(markerToAdd)] = point.pageId
+                    markersWithPageId[map.addMarker(markerToAdd)] = point
                 }
             }
         })
@@ -134,7 +138,12 @@ class WikiMapFragment : DaggerFragment(), OnMapReadyCallback,
         wikiViewModel.getPoiDetails().observe(viewLifecycleOwner, Observer { details ->
             pbWikiMap.visibility = View.GONE
 
-            val detailsArgs = Bundle().apply { putParcelable(POI_DETAILS_KEY, details) }
+            val detailsArgs = Bundle().apply {
+                putParcelable(POI_DETAILS_KEY, details)
+                putDouble(CURRENT_LAT_KEY, lastLocation!!.latitude)
+                putDouble(CURRENT_LON_KEY, lastLocation!!.longitude)
+                putStringArrayList(POI_IMAGES_KEY, ArrayList(details.images))
+            }
             PoiDialogFragment.newInstance(detailsArgs).show(
                 requireActivity().supportFragmentManager,
                 POI_DETAILS_FRAGMENT_TAG

@@ -47,8 +47,8 @@ class WikiViewModelImp @Inject constructor(val wikiUseCase: WikiUseCase): ViewMo
             })
     }
 
-    fun getPoiDetails(id: Int){
-        wikiUseCase.getPoiDetails(id)
+    fun getPoiDetails(wikiPoint: WikiPoint){
+        wikiUseCase.getPoiDetails(wikiPoint)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {

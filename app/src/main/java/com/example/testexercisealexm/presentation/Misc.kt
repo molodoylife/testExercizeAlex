@@ -1,10 +1,15 @@
 package com.example.testexercisealexm.presentation
 
 import android.location.Location
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.VisibleRegion
 
 const val POI_DETAILS_KEY = "POI_DETAILS_KEY"
+const val CURRENT_LAT_KEY = "CURRENT_LAT_KEY"
+const val CURRENT_LON_KEY = "CURRENT_LON_KEY"
+const val POI_IMAGES_KEY = "POI_IMAGES_KEY"
 const val POI_DETAILS_FRAGMENT_TAG = "POI_DETAILS_FRAGMENT_TAG"
 
 fun getMapRadius(googleMap: GoogleMap): Int {
@@ -25,3 +30,6 @@ fun getMapRadius(googleMap: GoogleMap): Int {
 
     return (diagonalDistance[0] / 2).toInt()
 }
+
+@GlideModule
+class GlideModule : AppGlideModule()

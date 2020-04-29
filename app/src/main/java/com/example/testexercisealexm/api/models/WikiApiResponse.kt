@@ -20,7 +20,7 @@ data class Geosearch(
 data class WikiSummary(
     @SerializedName("pageid") val pageid: Int,
     @SerializedName("title") val title: String,
-    @SerializedName("description") val description: String,
+    @SerializedName("description") val description: String?,
     @SerializedName("descriptionsource") val descriptionsource: String,
     @SerializedName("images") val images: List<Images>
 )

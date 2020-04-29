@@ -9,7 +9,7 @@ import javax.inject.Inject
 interface WikiUseCase {
     fun getNearestPois(radius: Int, lat: Double, lon: Double): Single<List<WikiPoint>>
 
-    fun getPoiDetails(id: Int): Single<WikiPoiDetails>
+    fun getPoiDetails(point: WikiPoint): Single<WikiPoiDetails>
 }
 
 class WikiUseCaseImp @Inject constructor(private val wikiRepo: WikiRepo): WikiUseCase{
@@ -19,7 +19,7 @@ class WikiUseCaseImp @Inject constructor(private val wikiRepo: WikiRepo): WikiUs
         return wikiRepo.getNearestWikiPois(adjustedRadius, lat, lon)
     }
 
-    override fun getPoiDetails(id: Int): Single<WikiPoiDetails> {
-        return wikiRepo.getWikiPoiDetails(id)
+    override fun getPoiDetails(point: WikiPoint): Single<WikiPoiDetails> {
+        return wikiRepo.getWikiPoiDetails(point)
     }
 }

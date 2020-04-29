@@ -12,7 +12,7 @@
         android:background="@color/colorBottomPage"
         app:behavior_hideable="false"
         android:paddingBottom="20dp"
-        app:behavior_peekHeight="80dp">
+        app:behavior_peekHeight="350dp">
 
         <ImageView
             android:id="@+id/handler"
@@ -29,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,9 +55,23 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description" />
+
+        <View
+            android:layout_marginTop="20dp"
+            android:id="@+id/spacer"
+            android:background="#fff"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvImages"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
 
         <TextView
             android:clickable="true"
@@ -67,10 +81,11 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvImages"
+            app:layout_constraintTop_toBottomOf="@+id/spacer"
             android:text="Wikipedia" />
 
         <TextView
+            android:id="@+id/getThere"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
