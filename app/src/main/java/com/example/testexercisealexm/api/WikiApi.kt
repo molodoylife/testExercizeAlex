@@ -7,6 +7,6 @@ import retrofit2.http.Query
 
 interface WikiApi {
     @GET("/w/api.php?action=query&list=geosearch&gslimit=10&format=json")
-    fun getWikiPoints(@Query("gsradius") gsradius: Int, @Query("gscord") gscord: String): Single<WikiGeoResponse>
+    fun getWikiPoints(@Query("gsradius") gsradius: Int, @Query("gscoord") gscord: String): Single<WikiGeoResponse>
 }
 
