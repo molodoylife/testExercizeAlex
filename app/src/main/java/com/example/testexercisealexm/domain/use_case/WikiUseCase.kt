@@ -6,6 +6,9 @@ import com.example.testexercisealexm.repo.WikiRepo
 import io.reactivex.Single
 import javax.inject.Inject
 
+/**
+ * UseCase for receiving nearest pois and their details
+ * */
 interface WikiUseCase {
     fun getNearestPois(radius: Int, lat: Double, lon: Double): Single<List<WikiPoint>>
 

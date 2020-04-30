@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TestExerciseAlexM</string>
+
+    <string name="wikipedia">Wikipedia</string>
+    <string name="get_there">Get There</string>
+    <string name="common_error_title">The app hit a snag, but we\'re working on it!</string>
 </resources>

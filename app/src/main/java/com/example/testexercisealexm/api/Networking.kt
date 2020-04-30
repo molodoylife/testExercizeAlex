@@ -17,7 +17,6 @@ fun retrofit(gson: Gson = gson()): Retrofit {
         .readTimeout(3, TimeUnit.SECONDS)
         .connectTimeout(3, TimeUnit.SECONDS)
         .apply {
-
             addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })

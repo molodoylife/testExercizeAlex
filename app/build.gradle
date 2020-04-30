@@ -15,6 +15,8 @@ ext {
     androidx_version = '2.2.0'
     rxPermissions_version = '0.10.2'
     glide_version = '4.8.0'
+    androidx_coreTesting = '2.1.0'
+    mockitoVersion = '3.3.3'
 }
 
 android {
@@ -79,4 +81,11 @@ dependencies {
 
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+    testImplementation "androidx.arch.core:core-testing:$androidx_coreTesting"
+
+    def mockito_version = '2.7.1' // For local unit tests on your development machine
+    testCompile "org.mockito:mockito-core:$mockito_version" // For instrumentation tests on Android devices and emulators
+    androidTestCompile "org.mockito:mockito-android:$mockito_version"
+
 }

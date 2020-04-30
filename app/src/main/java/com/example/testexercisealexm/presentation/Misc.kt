@@ -6,12 +6,22 @@ import com.bumptech.glide.module.AppGlideModule
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.VisibleRegion
 
+
+//TODO Organize in separate files
+
+/**
+ * Constants used in app
+ * */
 const val POI_DETAILS_KEY = "POI_DETAILS_KEY"
 const val CURRENT_LAT_KEY = "CURRENT_LAT_KEY"
 const val CURRENT_LON_KEY = "CURRENT_LON_KEY"
 const val POI_IMAGES_KEY = "POI_IMAGES_KEY"
 const val POI_DETAILS_FRAGMENT_TAG = "POI_DETAILS_FRAGMENT_TAG"
 
+
+/**
+ * @return radius of visible google map region
+ * */
 fun getMapRadius(googleMap: GoogleMap): Int {
     val visibleRegion: VisibleRegion = googleMap.projection.visibleRegion
 
